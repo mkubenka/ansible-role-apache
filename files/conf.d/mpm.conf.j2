@@ -1,0 +1,34 @@
+{% if apache_mpm_module == 'prefork' %}
+<IfModule mpm_prefork_module>
+  StartServers          20
+  MinSpareServers       20
+  MaxSpareServers       60
+  ServerLimit           60
+  MaxClients            60
+  MaxRequestsPerChild   2000
+</IfModule>
+{% endif %}
+
+{% if apache_mpm_module == 'worker' %}
+<IfModule mpm_event_module>
+  StartServers        3
+  ServerLimit         16
+  MinSpareThreads     25
+  MaxSpareThreads     75
+  ThreadLimit         64
+  ThreadsPerChild     25
+  MaxRequestWorkers   150
+</IfModule>
+{% endif %}
+
+{% if apache_mpm_module == 'event' %}
+<IfModule mpm_event_module>
+  StartServers        3
+  ServerLimit         16
+  MinSpareThreads     25
+  MaxSpareThreads     75
+  ThreadLimit         64
+  ThreadsPerChild     25
+  MaxRequestWorkers   150
+</IfModule>
+{% endif %}

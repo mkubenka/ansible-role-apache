@@ -1,0 +1,5 @@
+---
+
+apache_mpm_module: 'prefork'
+
+apache_server_tokens: Minor

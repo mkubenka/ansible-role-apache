@@ -1,0 +1,35 @@
+---
+
+- name: install httpd packages
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - httpd
+    - httpd-tools
+    - mod_ssl
+
+- name: create httpd sites directory
+  file: path=/etc/httpd/sites.d state=directory
+
+- name: create httpd certs directory
+  file: path=/etc/httpd/certs state=directory
+
+- name: copy httpd configuration
+  template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf backup=yes
+  notify: validate and reload httpd
+
+- name: copy modules httpd configuration
+  template: src={{ item }} dest=/etc/httpd/conf.modules.d/{{ item[:-3] | basename }} owner=root group=root backup=yes
+  # When using relative path ansible default looks in files/ directory :-(
+  with_fileglob:
+    - conf.modules.d/*.j2
+  notify: validate and reload httpd
+
+- name: copy additional httpd configuration
+  template: src={{ item }} dest=/etc/httpd/conf.d/{{ item[:-3] | basename }} owner=root group=root backup=yes
+  # When using relative path ansible default looks in files/ directory :-(
+  with_fileglob:
+    - conf.d/*.j2
+  notify: validate and reload httpd
+
+- name: start and enable the httpd
+  service: name=httpd state=started enabled=true
